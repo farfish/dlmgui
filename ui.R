@@ -3,11 +3,14 @@ library(hodfr)
 navbarPage("FFDB DLMtool GUI", id="nav",
                   tabPanel("Edit data",
 
-                      fileInput('loadCSV', 'Load a DLMtool CSV',
-                          accept = c('text/csv', 'text/comma-separated-values', 'text/tab-separated-values', 'text/plain', '.csv', '.tsv')),
-                      div(
-                          textInput('filename', NULL, placeholder = "filename"),
-                          downloadButton("saveCSV", "Save data to CSV")),
+                      div(class="row",
+                          div(class="col-md-3",
+                              fileInput('loadCSV', 'Load a DLMtool CSV',
+                                  accept = c('text/csv', 'text/comma-separated-values', 'text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
+                          div(class="col-md-3",
+                              textInput('filename', NULL, label="Filename to save as")),
+                          div(class="col-md-3",
+                              downloadButton("saveCSV", "Save data to CSV", style = "margin-top: 25px"))),
 
                       h3('Data description'),
                       p('Please fill the form with all the data available for your ',
