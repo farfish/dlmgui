@@ -19,3 +19,10 @@ ok_group("json_df_to_ffdbdoc", {
       some_string = c("cuthbert", "dibble", "grub"),  # Haven't converted string vectors into NA
   row.names = c('2000', '2001', '2002'), stringsAsFactors = FALSE)), "NA's converted correctly")
 })
+
+ok_group("dlmtool_csv_to_ffdbdoc", {
+    ok(all.equal(
+        ffdbdoc_to_dlmtool(dlmtool_csv_to_ffdbdoc('Cobia.csv')),
+        XL2Data('Cobia.csv'),
+        tolerance = 1.5e-6), "Can go CSV->ffdbdoc->Data without losing any data")
+})

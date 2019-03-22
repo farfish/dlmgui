@@ -1,38 +1,127 @@
-# Define UI for app that draws a histogram ----
-ui <- fluidPage(
+library(hodfr)
 
-  # App title ----
-  titlePanel(
-    fluidRow(
-      column(1, img(
-        width = 89, height = 83,
-        src = "https://www.farfish.eu/wp-content/uploads/2017/08/FarFish-300x281.png"
-      )),
-      column(9, "Farfish DLMtool")
-    )
-  , windowTitle = "Farfish DLMtool"),
+navbarPage("FFDB DLMtool GUI", id="nav",
+                  tabPanel("Edit data",
 
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
+                      fileInput('loadCSV', 'Load a DLMtool CSV',
+                          accept = c('text/csv', 'text/comma-separated-values', 'text/tab-separated-values', 'text/plain', '.csv', '.tsv')),
+                      div(
+                          textInput('filename', NULL, placeholder = "filename"),
+                          downloadButton("saveCSV", "Save data to CSV")),
 
-    # Sidebar panel for inputs ----
-    sidebarPanel(
+                      h3('Data description'),
+                      p('Please fill the form with all the data available for your ',
+                        'stock, if you are not sure about the value of some category ',
+                        "please enter 'NA'. If a field heading is underlined ",
+                        "you can hover over for a more detailed description."),
+                      p("Based on DLMtool package",
+                        "(Tom Carruthers and Adrian Hordyk (2016). DLMtool: Data-Limited ",
+                        "Methods Toolkit. R package version 3.1.)",
+                        a('https://CRAN.R-project.org/package=DLMtool', href='https://CRAN.R-project.org/package=DLMtool')),
+                      hodfr(
+                          "metadata",
+                          fields = list(
+                              list(name = 'species', title = 'Species'),
+                              list(name = 'location', title = 'Location'),
+                              list(name = 'case_study', title = 'Case study')),
+                          params = list(rowHeaderWidth = 140),
+                          orientation = 'vertical'),
 
-      selectInput(
-          "document_name",
-          "Document name",
-          list()),
+                      h3('Catch data'),
+                      p('Catch data should be in tonnes.',
+                        'You can include more than one abundance index indicating it in the Abundance Index Max field.'),
+                      hodfr(
+                          "catch",
+                          fields = list(
+                              list(name = "catch", title = "Catch"),
+                              list(name = 'abundance_index_1', title = 'Abundance Index')),
+                          values = list(type = 'year', min = 2000, max = 2010),
+                          params = list(rowHeaderWidth = 170),
+                          orientation = 'vertical'),
 
-      a("Upload/edit data in FFDB", href="/upload"),
-      br(),
-      br(),
-      downloadButton("download_csv", "Download DLMtool CSV")
-    ),
+                      h3('Catch at age'),
+                      p('Age data should be in numbers.'),
+                      hodfr(
+                          "caa",
+                          fields = list(type = "bins", max = 10),
+                          values = list(type = "year", min = 2000, max = 2010)),
 
-    # Main panel for displaying outputs ----
-    mainPanel(
+                      h3('Catch at length'),
+                      p('Length data should be in mm.'),
+                      hodfr(
+                          "cal",
+                          fields = list(type = "bins", max = 10),
+                          values = list(type = "year", min = 2000, max = 2010, initial = list(
+                              list(name= "Min Length", title = "Min Length"))),
+                          params = list(rowHeaderWidth = 100)),
 
-      tabsetPanel(type = "tabs",
+                      h3('Constants'),
+                      p("In the 'source' field write for each value a reference source, this ",
+                        "could be a bibliographic or a database (e.g. www.fishbase.org, ",
+                        "http://ramlegacy.org) if available. If you do not have a reference ",
+                        "but you have some knowledge on the value or if a reference does not ",
+                        "apply please enter 'NA'.",
+                        ""),
+                      hodfr(
+                          "constants",
+                          fields = list(
+                              list(name = "avg_catch_over_time", title = 'Average catch over time t'), # Mean of catch
+                              list(name = "depletion_over_time", title = '<abbr title="Estimated biomass in the last year divided by estimated biomass at the beginning of time series">Depletion over time t</abbr>'),
+                              list(name = "M", title = '<abbr title="Instantaneous natural mortality rate (year⁻¹)">M: Instantaneous natural mortality rate</a>'),
+                              list(name = "FMSY/M", title = 'FMSY/M'),
+                              list(name = "BMSY/B0", title = '<abbr title="The most productive stock size relative to unfished biomass">BMSY/B0</abbr>'),
+                              list(name = "MSY", title = 'MSY'),
+                              list(name = "BMSY", title = 'BMSY'),
+                              list(name = "length_at_50pc_maturity", title = 'Length at 50% maturity'),
+                              list(name = "length_at_95pc_maturity", title = 'Length at 95% maturity'),
+                              list(name = "length_at_first_capture", title = 'Length at first capture'),
+                              list(name = "length_at_full_selection", title = 'Length at full selection'),
+                              list(name = "current_stock_depletion", title = '<abbr title="Biomass today divided by unfished biomass (B0)">Current stock depletion</abbr>'),
+                              list(name = "current_stock_abundance", title = '<abbr title="Estimated abundance today">Current stock abundance</abbr>'),
+                              list(name = "Von_Bertalanffy_K", title = '<abbr title="Growth rate parameter">Von Bertalanffy K parameter</abbr>'),
+                              list(name = "Von_Bertalanffy_Linf", title = 'Von Bertalanffy Linf parameter'),
+                              list(name = "Von_Bertalanffy_t0", title = 'Von Bertalanffy t0 parameter'),
+                              list(name = "Length-weight_parameter_a", title = 'Length-weight param a (W=aLᵇ)'),
+                              list(name = "Length-weight_parameter_b", title = 'Length-weight param b (W=aLᵇ)'),
+                              list(name = "maximum_age", title = 'Maximum age'),
+                              list(name = "ref_ofl_limit", title = '<abbr title="Reference Overfishing limit or reference catch limit e.g. previous catch recommendation">Reference Overfishing/catch limit</abbr>')),
+                          values = list(
+                              list(name = "value", title = "Value"),
+                              list(name = "source", title = "Source")),
+                          orientation = 'vertical',
+                          params = list(rowHeaderWidth = 330)),
+
+                      h3('Coefficient of variation'),
+                      p("CV is a measure of imprecision, i.e. how imprecise you think this value could be"),
+                      hodfr(
+                          "cv",
+                          fields = list(
+                              list(name = "catch", title = "CV Catch"),
+                              list(name = "depletion_over_time", title = "CV Depletion over time t"),
+                              list(name = "avg_catch_over_time", title = "CV Average catch over time t"),
+                              list(name = "abundance_index", title = "CV Abundance index"),
+                              list(name = "M", title = "CV M"),
+                              list(name = "FMSY/M", title = "CV FMSY/M"),
+                              list(name = "BMSY/B0", title = "CV BMSY/B0"),
+                              list(name = "current_stock_depletion", title = "CV current stock depletion"),
+                              list(name = "current_stock_abundance", title = "CV current stock abundance"),
+                              list(name = "Von_Bertalanffy_K", title = "CV von B. K parameter"),
+                              list(name = "Von_Bertalanffy_Linf", title = "CV von B. Linf parameter"),
+                              list(name = "Von_Bertalanffy_t0", title = "CV von B. t0 parameter"),
+                              list(name = "length_at_50pc_maturity", title = "CV Length at 50% maturity"),
+                              list(name = "length_at_first_capture", title = "CV Length at first capture"),
+                              list(name = "length_at_full_selection", title = "CV Length at full selection"),
+                              list(name = "Length-weight_parameter_a", title = "CV Length-weight parameter a"),
+                              list(name = "Length-weight_parameter_b", title = "CV Length-weight parameter b"),
+                              list(name = "length_composition", title = "Imprecision in length composition data")),
+                          values = list(
+                              list(name = "value", title = "Value"),
+                              list(name = "source", title = "Source")),
+                          orientation = 'vertical',
+                          params = list(rowHeaderWidth = 270)),
+
+                      p("")),
+
                   tabPanel("Catch / Abundance Index Plot",
                       plotOutput("catchPlot", height=600),
                       downloadButton("catchPlotDownload", label = "Download plot")),
@@ -54,7 +143,4 @@ ui <- fluidPage(
                       plotOutput("mpBoxPlot"),
                       downloadButton("mpBoxPlotDownload", label = "Download plot"),
                       tableOutput("mpTable"))
-                  )
-    )
-  )
 )
