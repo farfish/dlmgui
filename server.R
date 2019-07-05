@@ -5,6 +5,7 @@ library(DLMtool)
 library(hodfr)
 
 source('ffdbclient.R')
+source('dlmtool_glossary.R')
 
 options(shiny.sanitize.errors = FALSE)
 
@@ -103,17 +104,19 @@ server <- function(input, output, session) {
 
   output$canTable <- renderTable({
     d <- dlm_doc()
-    out <- merge(data.frame(Code = Can(d)), dlmtool_methods, by = "Code", all.x = TRUE)
+    out <- merge(data.frame(Code = Can(d), stringsAsFactors = FALSE), dlmtool_methods, by = "Code", all.x = TRUE)
+    out$Code <- dlmtool_help_link(out$Code)
     out[with(out, order(Direction, Code)), colnames(dlmtool_methods)]
-  })
+  }, sanitize.text.function = function(x) x)  # NB: Disable HTML escaping for help links
 
   output$cantTable <- renderTable({
     d <- dlm_doc()
-    out <- as.data.frame(Cant(d))
+    out <- as.data.frame(Cant(d), stringsAsFactors = FALSE)
     colnames(out) <- c("Code", "Reason")
     out <- merge(out, dlmtool_methods, by = "Code", all.x = TRUE)
+    out$Code <- dlmtool_help_link(out$Code)
     out[with(out, order(Direction, Code)), c('Direction', 'Code', 'Name', 'Type', 'Reason')]
-  })
+  }, sanitize.text.function = function(x) x)  # NB: Disable HTML escaping for help links
 
   #### TAC plot
 
@@ -131,7 +134,8 @@ server <- function(input, output, session) {
   output$mpTable <- renderTable({
     d <- dlm_doc()
     # Find all possible output methods
-    out <- merge(data.frame(Code = Can(d)), dlmtool_methods, by = "Code")
+    out <- merge(data.frame(Code = Can(d), stringsAsFactors = FALSE), dlmtool_methods, by = "Code")
+    out$Code <- dlmtool_help_link(out$Code)
     out[which(out$Direction == 'output'), colnames(out) != 'Direction']
-  })
+  }, sanitize.text.function = function(x) x)  # NB: Disable HTML escaping for help links
 }
