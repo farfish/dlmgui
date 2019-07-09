@@ -145,5 +145,6 @@ navbarPage("DLMGui", id="nav",
                   tabPanel("TAC Plot",
                       plotOutput("mpBoxPlot"),
                       downloadButton("mpBoxPlotDownload", label = "Download plot"),
-                      tableOutput("mpTable"))
+                      tableOutput("mpTable")),
+                  footer = includeHTML("footer.html")
 )
