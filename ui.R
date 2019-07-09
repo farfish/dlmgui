@@ -1,6 +1,6 @@
 library(hodfr)
 
-navbarPage("FFDB DLMtool GUI", id="nav",
+navbarPage("DLMGui", id="nav",
                   tabPanel("Edit data",
 
                       div(class="row",

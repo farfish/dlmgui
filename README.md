@@ -1,6 +1,6 @@
-# FFDB DLMTool shiny app
+# FFDB DLMGui shiny app
 
-Presents various analyses of data stored in FFDB.
+Presents various analyses of data stored in FFDB. Standalone version.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ Check out this repository, and install required R packages with:
 
 Symlink this directory into the shiny server root, for example:
 
-    ln -rs . /srv/shiny-server/ffdb-dlmtool
+    ln -rs . /srv/shiny-server/dlmgui
 
 ## Authors
 
