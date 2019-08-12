@@ -1,4 +1,4 @@
-# FFDB DLMGui shiny app
+# FarFish DLMGui shiny app
 
 Presents various analyses of data stored in FFDB. Standalone version.
 

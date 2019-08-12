@@ -1,6 +1,6 @@
 library(hodfr)
 
-navbarPage("DLMGui", id="nav",
+navbarPage("FarFish DLMGui", id="nav",
                   tabPanel("Edit data",
 
                       div(class="row",
