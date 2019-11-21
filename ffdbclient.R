@@ -126,8 +126,8 @@ dlmtool_csv_to_ffdbdoc <- function (in_file) {
 
     list(
         metadata = data.frame(
-            species = d@Name,
-            location = d@Region,
+            species = paste0("", d@Name),
+            location = ifelse(length(d@Region), d@Region, as.character(NA)),
             case_study = '',
             row.names = c('value'),
             stringsAsFactors = FALSE),
