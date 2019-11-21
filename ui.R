@@ -54,8 +54,9 @@ navbarPage("FarFish DLMGui", id="nav",
                       hodfr(
                           "cal",
                           fields = list(type = "bins", max = 10),
-                          values = list(type = "year", min = 2000, max = 2010, initial = list(
-                              list(name= "Min Length", title = "Min Length"))),
+                          values = list(
+                              list(name= "Min Length", title = "Min Length"),
+                              list(type = "year", min = 2000, max = 2010)),
                           params = list(rowHeaderWidth = 100)),
 
                       h3('Constants'),
