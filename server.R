@@ -13,15 +13,22 @@ dlmtool_methods <- read.csv('dlmtool-methods.csv')
 
 server <- function(input, output, session) {
     ##### All plots / output are based on the current table input
-    dlm_doc <- reactive({
-        ffdbdoc <- list(
+    ffdb_doc <- reactive({
+        list(
             metadata=input$metadata,
             catch=input$catch,
             caa=input$caa,
             cal=input$cal,
             constants=input$constants,
             cv=input$cv)
-        ffdbdoc_to_dlmtool(ffdbdoc)
+    })
+
+    dlm_doc <- reactive({
+        f <- tempfile(fileext = ".csv")
+        ffdbdoc_to_dlmtool_csv(ffdb_doc(), output = f)
+        d <- DLMtool::XL2Data(f)
+        unlink(f)
+        return(d)
     })
 
     ##### File handling
@@ -41,14 +48,7 @@ server <- function(input, output, session) {
             paste0(input$filename, ".csv")
         },
         content = function(file) {
-            ffdbdoc <- list(
-                metadata=input$metadata,
-                catch=input$catch,
-                caa=input$caa,
-                cal=input$cal,
-                constants=input$constants,
-                cv=input$cv)
-            ffdbdoc_to_dlmtool_csv(ffdbdoc, output = file)
+            ffdbdoc_to_dlmtool_csv(ffdb_doc(), output = file)
         }
     )
 
