@@ -13,7 +13,7 @@ dlmtool_methods <- read.csv('dlmtool-methods.csv')
 
 server <- function(input, output, session) {
     ##### All plots / output are based on the current table input
-    dlm_csv <- function(out_file) {
+    dlm_csv <- reactive({
         utils::capture.output(dataframes_to_csv(list(
             metadata=input$metadata,
             catch=input$catch,
@@ -21,12 +21,12 @@ server <- function(input, output, session) {
             caa=input$caa,
             cal=input$cal,
             constants=input$constants,
-            cv_constants=input$cv)), file = out_file)
-    }
+            cv_constants=input$cv)))
+    })
 
     dlm_doc <- reactive({
         f <- tempfile(fileext = ".csv")
-        dlm_csv(f)
+        writeLines(dlm_csv(), con = f)
         d <- DLMtool::XL2Data(f)
         unlink(f)
         return(d)
@@ -50,7 +50,7 @@ server <- function(input, output, session) {
             paste0(input$filename, ".csv")
         },
         content = function(file) {
-            dlm_csv(file)
+            writeLines(dlm_csv(), con = file)
         }
     )
 
@@ -121,23 +121,34 @@ server <- function(input, output, session) {
   }, sanitize.text.function = function(x) x)  # NB: Disable HTML escaping for help links
 
   #### TAC plot
-
+  document_mps <- observeEvent(dlm_csv(), {
+    # Document changed, so clear legend checkboxes
+    updateCheckboxGroupInput(session, "mpLegend", choices = c(''), selected = c())
+  })
   mpBoxPlot <- function () {
     d <- dlm_doc()
-    d_tac <- runMP(d, reps=1000)
-    boxplot(d_tac)
+
+    # Restrict to selected MPs if any selected
+    MPs <- input$mpLegend
+    if (length(MPs) == 0) MPs <- NA
+
+    d_tac <- runMP(d, MPs = MPs, reps=1000, silent = TRUE)
+    results <- boxplot(d_tac, col = "#237aa5")
+
+    # Update legend with available MPs
+    if (is.na(MPs)) {
+        MPs <- rev(as.character(results$MP))
+        updateCheckboxGroupInput(session, "mpLegend",
+            choiceValues = MPs,
+            choiceNames = lapply(unname(MPs), function (m) {
+                span(HTML(dlmtool_help_link(m)),
+                    span(dlmtool_method_info(m)['description'], style="float:right;width:calc(100% - 10rem);padding-bottom:1rem"))
+            }))
+    }
   }
   output$mpBoxPlot <- renderPlot({ mpBoxPlot() })
   output$mpBoxPlotDownload <- downloadHandler(
       filename = function() { paste(input$document_name, ".mpBoxPlot.png", sep="") },
       content = function(file) { png(file) ; print(mpBoxPlot()) ; dev.off() }
   )
-
-  output$mpTable <- renderTable({
-    d <- dlm_doc()
-    # Find all possible output methods
-    out <- merge(data.frame(Code = Can(d), stringsAsFactors = FALSE), dlmtool_methods, by = "Code")
-    out$Code <- dlmtool_help_link(out$Code)
-    out[which(out$Direction == 'output'), colnames(out) != 'Direction']
-  }, sanitize.text.function = function(x) x)  # NB: Disable HTML escaping for help links
 }

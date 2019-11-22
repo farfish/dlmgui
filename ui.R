@@ -106,6 +106,6 @@ navbarPage("FarFish DLMGui", id="nav",
                   tabPanel("TAC Plot",
                       plotOutput("mpBoxPlot"),
                       downloadButton("mpBoxPlotDownload", label = "Download plot"),
-                      tableOutput("mpTable")),
+                      checkboxGroupInput("mpLegend", "MPs to show:", inline = TRUE)),
                   footer = includeHTML("footer.html")
 )
