@@ -4,7 +4,7 @@ library(memoise)
 library(DLMtool)
 library(hodfr)
 
-source('ffdbclient.R')
+source('dlm_mapping.R')
 source('dlmtool_glossary.R')
 
 options(shiny.sanitize.errors = FALSE)
@@ -13,19 +13,20 @@ dlmtool_methods <- read.csv('dlmtool-methods.csv')
 
 server <- function(input, output, session) {
     ##### All plots / output are based on the current table input
-    ffdb_doc <- reactive({
-        list(
+    dlm_csv <- function(out_file) {
+        utils::capture.output(dataframes_to_csv(list(
             metadata=input$metadata,
             catch=input$catch,
+            abundance_index=input$abundance_index,
             caa=input$caa,
             cal=input$cal,
             constants=input$constants,
-            cv=input$cv)
-    })
+            cv_constants=input$cv)), file = out_file)
+    }
 
     dlm_doc <- reactive({
         f <- tempfile(fileext = ".csv")
-        ffdbdoc_to_dlmtool_csv(ffdb_doc(), output = f)
+        dlm_csv(f)
         d <- DLMtool::XL2Data(f)
         unlink(f)
         return(d)
@@ -34,13 +35,14 @@ server <- function(input, output, session) {
     ##### File handling
     observeEvent(input$loadCSV, {
         updateTextInput(session, "filename", value = gsub('.\\w+$', '', input$loadCSV$name))
-        d <- dlmtool_csv_to_ffdbdoc(input$loadCSV$datapath)
-        updateHodfrInput(session, "metadata", d$metadata)
-        updateHodfrInput(session, "catch", d$catch)
-        updateHodfrInput(session, "caa", d$caa)
-        updateHodfrInput(session, "cal", d$cal)
-        updateHodfrInput(session, "constants", d$constants)
-        updateHodfrInput(session, "cv", d$cv)
+        dfs <- csv_to_dataframes(input$loadCSV$datapath)
+        updateHodfrInput(session, "metadata", dfs[['metadata']])
+        updateHodfrInput(session, "catch", dfs[['catch']])
+        updateHodfrInput(session, "abundance_index", dfs[['abundance_index']])
+        updateHodfrInput(session, "caa", dfs[['caa']])
+        updateHodfrInput(session, "cal", dfs[['cal']])
+        updateHodfrInput(session, "constants", dfs[['constants']])
+        updateHodfrInput(session, "cv", dfs[['cv_constants']])
     })
 
     output$saveCSV <- downloadHandler(
@@ -48,7 +50,7 @@ server <- function(input, output, session) {
             paste0(input$filename, ".csv")
         },
         content = function(file) {
-            ffdbdoc_to_dlmtool_csv(ffdb_doc(), output = file)
+            dlm_csv(file)
         }
     )
 
