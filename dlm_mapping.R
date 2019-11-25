@@ -128,9 +128,6 @@ csv_to_dataframes <- function (filename) {
         })(),
         cal = (function () {
             dat <- as.data.frame(cbind(d@CAL[1,,], rep(NA, length(d@CAL_bins) - dim(d@CAL)[3])))
-            if (nrow(dat) < length(d@Year)) {
-                return(data.frame("1" = c(NA), row.names = d@Year[1]))
-            }
             rownames(dat) <- d@Year[seq_len(nrow(dat))]  # NB: Should be equal, unless there's no data
             dat <- remove_na(dat)
 
