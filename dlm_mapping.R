@@ -6,10 +6,7 @@ dlm_metadata <- t(matrix(c(
       "Common_Name", "Common Name",
       "Species", "Species",
       "Region", "Region",
-      "Units", "Units",
-
-      "Ref","Reference OFL",
-      "Ref_type", "Reference OFL type"
+      "Units", "Units"
       ), nrow=2))
 
 # TODO: Additional tables:
@@ -45,7 +42,10 @@ dlm_constants <- t(matrix(c(
       "Bref","Biomass Reference",
       "Iref","Index Reference",
       "AvC","Average catch over time t",
-      "Dt","Depletion over time t"
+      "Dt","Depletion over time t",
+
+      "Ref","Reference OFL",
+      "Ref_type", "Reference OFL type"
       ), nrow=2))
 
 dlm_cv_constants <- t(matrix(c(
