@@ -78,7 +78,7 @@ navbarPage("FarFish DLMGui", id="nav",
                       h3('Coefficient of variation'),
                       p("CV is a measure of imprecision, i.e. how imprecise you think this value could be"),
                       hodfr(
-                          "cv",
+                          "cv_constants",
                           fields = dlm_to_hodfr(dlm_cv_constants),
                           values = list(
                               list(name = "value", title = "Value")),

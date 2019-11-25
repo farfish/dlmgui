@@ -12,16 +12,14 @@ options(shiny.sanitize.errors = FALSE)
 dlmtool_methods <- read.csv('dlmtool-methods.csv')
 
 server <- function(input, output, session) {
+    # Get names of data.frame inputs from UI
+    df_names <- shiny::isolate(names(Filter(is.data.frame, reactiveValuesToList(input))))
+    names(df_names) <- df_names
+
     ##### All plots / output are based on the current table input
     dlm_csv <- reactive({
-        utils::capture.output(dataframes_to_csv(list(
-            metadata=input$metadata,
-            catch=input$catch,
-            abundance_index=input$abundance_index,
-            caa=input$caa,
-            cal=input$cal,
-            constants=input$constants,
-            cv_constants=input$cv)))
+        utils::capture.output(dataframes_to_csv(
+            lapply(df_names, function (x) input[[x]])))
     })
 
     dlm_doc <- reactive({
@@ -36,13 +34,9 @@ server <- function(input, output, session) {
     observeEvent(input$loadCSV, {
         updateTextInput(session, "filename", value = gsub('.\\w+$', '', input$loadCSV$name))
         dfs <- csv_to_dataframes(input$loadCSV$datapath)
-        updateHodfrInput(session, "metadata", dfs[['metadata']])
-        updateHodfrInput(session, "catch", dfs[['catch']])
-        updateHodfrInput(session, "abundance_index", dfs[['abundance_index']])
-        updateHodfrInput(session, "caa", dfs[['caa']])
-        updateHodfrInput(session, "cal", dfs[['cal']])
-        updateHodfrInput(session, "constants", dfs[['constants']])
-        updateHodfrInput(session, "cv", dfs[['cv_constants']])
+        for (n in df_names) {
+            updateHodfrInput(session, n, dfs[[n]])
+        }
     })
 
     output$saveCSV <- downloadHandler(
