@@ -49,6 +49,15 @@ navbarPage("FarFish DLMGui", id="nav",
                           params = list(rowHeaderWidth = 170),
                           orientation = 'vertical'),
 
+                      h3('Annual fishing effort'),
+                      hodfr(
+                          "effort",
+                          fields = list(
+                              list(name = "effort", title = "Effort")),
+                          values = list(type = 'year', min = 2000, max = 2000),
+                          params = list(rowHeaderWidth = 100),
+                          orientation = 'vertical'),
+
                       h3('Catch at age'),
                       p('Catch should be in individuals.'),
                       hodfr(

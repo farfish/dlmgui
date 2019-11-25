@@ -13,7 +13,6 @@ dlm_metadata <- t(matrix(c(
       ), nrow=2))
 
 # TODO: Additional tables:
-#      "Effort", "Effort",
 #      "Rec", "Recruitment index",
 #      "ML", "Mean length",
 #      "Lc", "Modal length (Lc)",
@@ -120,6 +119,7 @@ csv_to_dataframes <- function (filename) {
         metadata = const_to_df(dlm_metadata),
         catch = remove_na(data.frame(catch = as.vector(d@Cat), row.names = d@Year)),
         abundance_index = remove_na(data.frame(abundance_index = as.vector(d@Ind), row.names = d@Year)),
+        effort = remove_na(data.frame(effort = as.vector(d@Effort), row.names = d@Year)),
         caa = (function () {
             dat <- as.data.frame(d@CAA[1,,])
             rownames(dat) <- d@Year[seq_len(nrow(dat))]  # NB: Should be equal, unless there's no data
@@ -166,6 +166,7 @@ dataframes_to_csv <- function (dfs) {
 
     write_line('Catch', as.numeric(dfs$catch[as.character(years), 1]))
     write_line('Abundance index', as.numeric(dfs$abundance_index[as.character(years), 1]))
+    write_line('Effort', as.numeric(dfs$effort[as.character(years), 1]))
 
     # CAA
     if (!all(is.na(dfs$caa))) {
