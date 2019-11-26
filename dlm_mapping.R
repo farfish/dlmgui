@@ -129,10 +129,12 @@ csv_to_dataframes <- function (filename) {
         cal = (function () {
             dat <- as.data.frame(cbind(d@CAL[1,,], rep(NA, length(d@CAL_bins) - dim(d@CAL)[3])))
             rownames(dat) <- d@Year[seq_len(nrow(dat))]  # NB: Should be equal, unless there's no data
+            colnames(dat) <- seq_len(ncol(dat))
             dat <- remove_na(dat)
 
             bins <- as.data.frame(t(d@CAL_bins))
             rownames(bins) <- c("Min Length")
+            colnames(bins) <- seq_len(ncol(bins))
             return(rbind(bins, dat))
         })(),
         constants = const_to_df(dlm_constants),
