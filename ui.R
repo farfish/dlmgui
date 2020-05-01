@@ -2,7 +2,13 @@ library(shinycssloaders)
 library(hodfr)
 source('dlm_mapping.R')
 
-navbarPage("FarFish DLMGui", id="nav",
+navbarPage(id = "nav", windowTitle = "FarFish DLMGui",
+                  title = div(
+                      span("FarFish DLMGui"),
+                      a(icon("github", lib = "font-awesome"),
+                          href="https://github.com/farfish/dlmgui",
+                          class="navbar-brand",
+                          style="position: absolute; top: 0; right: 0")),
                   tabPanel("Edit data",
 
                       div(class="row",
