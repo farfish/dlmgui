@@ -39,6 +39,14 @@ server <- function(input, output, session) {
         }
     })
 
+    observeEvent(input$loadDemo, {
+        updateTextInput(session, "filename", value = "demo")
+        dfs <- csv_to_dataframes("demo.csv")
+        for (n in df_names) {
+            updateHodfrInput(session, n, dfs[[n]])
+        }
+    })
+
     output$saveCSV <- downloadHandler(
         filename = function() {
             paste0(input$filename, ".csv")
