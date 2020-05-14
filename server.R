@@ -72,7 +72,7 @@ server <- function(input, output, session) {
 
   caaPlot <- function () {
     d <- dlm_doc()
-    summary(d, wait=FALSE, plots=c('CAA'))
+    summary(d, wait=FALSE, plots=c('CAA'), tplot = 50)
   }
   output$caaPlot <- renderPlot({ caaPlot() })
   output$caaPlotDownload <- downloadHandler(
@@ -84,7 +84,7 @@ server <- function(input, output, session) {
 
   calPlot <- function () {
     d <- dlm_doc()
-    summary(d, wait=FALSE, plots=c('CAL'))
+    summary(d, wait=FALSE, plots=c('CAL'), tplot = 50)
   }
   output$calPlot <- renderPlot({ calPlot() })
   output$calPlotDownload <- downloadHandler(
