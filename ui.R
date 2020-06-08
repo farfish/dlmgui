@@ -71,7 +71,10 @@ navbarPage(id = "nav", windowTitle = "FarFish DLMGui",
                           values = list(type = "year", min = 2000, max = 2000)),
 
                       h3('Catch at length'),
-                      p('Length should be in mm, catch should be in individuals. All bins should have a number in, apart from the final column which is the maximum length. For the final column all years should be NA.'),
+                      p('Length should be in mm, catch should be in individuals.',
+                        'All bins should have a number in, apart from the final column which is the maximum length.',
+                        'For the final column all years should be NA.',
+                        'All length bins should be the same length.'),
                       hodfr(
                           "cal",
                           fields = list(type = "bins", max = 10),
