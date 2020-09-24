@@ -1,6 +1,5 @@
 library(jsonlite)
 library(ggplot2)
-library(memoise)
 library(DLMtool)
 library(hodfr)
 

@@ -1,7 +1,15 @@
-install.packages("pool")
-devtools::install_github("thomasp85/patchwork")
-devtools::install_github("r-lib/memoise")
-install.packages("shinycssloaders")
+install.packages('remotes')
 
-# Develpoment dependencies
-install.packages('unittest')
+install.packages('readxl')  # Required by DLMtool::XL2Data
+remotes::install_github('DLMtool/DLMtool', '635442c')
+
+install.packages("xml2")  # For parsing help output
+
+install.packages("shinycssloaders")
+remotes::install_github("shuttlethread/hodfr")
+install.packages('shiny')
+
+# Development dependencies
+if (nzchar(Sys.getenv('DEVEL_MODE'))) {
+    install.packages('unittest')
+}
